@@ -12,3 +12,4 @@ List of ports to expose from the container. Exposing a port here gives the syste
 * https://github.com/zalando-incubator/kube-ingress-aws-controller
 * https://github.com/jcmoraisjr/haproxy-ingress
 * https://kind.sigs.k8s.io/docs/user/ingress/ - creat cluster
+* https://github.com/slok/kube-code-generator
