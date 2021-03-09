@@ -9,3 +9,6 @@ List of ports to expose from the container. Exposing a port here gives the syste
 
 * https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#container-v1-core
 * https://github.com/spotahome/kooper/tree/master/examples
+* https://github.com/zalando-incubator/kube-ingress-aws-controller
+* https://github.com/jcmoraisjr/haproxy-ingress
+* 
