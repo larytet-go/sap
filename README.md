@@ -5,9 +5,12 @@ Create a cluster using https://kind.sigs.k8s.io/docs/user/quick-start/
 ```
 GO111MODULE="on" go get sigs.k8s.io/kind@v0.10.0
 # Make sure that no other configurations are impacted
-export KUBECONFIG=
+export KUBECONFIG=./config
 # This step downloads the images. It will take a few minutes depending on the connection
 $GOPATH/bin/kind --kubeconfig ./config create cluster
+
+# list clusters 
+kind get clusters
 # check the status
 kubectl cluster-info --context kind-kind
 ```
