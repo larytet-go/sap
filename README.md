@@ -33,3 +33,4 @@ List of ports to expose from the container. Exposing a port here gives the syste
 * https://kind.sigs.k8s.io/docs/user/ingress/ - creat cluster
 * https://github.com/slok/kube-code-generator
 * https://kind.sigs.k8s.io/docs/user/quick-start/
+* https://github.com/kubernetes/client-go/issues/741  - package dependencies k8s 1.19
