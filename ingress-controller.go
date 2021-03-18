@@ -25,6 +25,7 @@ import (
 )
 
 func run() error {
+	ctx := context.Background()
 	// Initialize logger.
 	logger := kooperlogrus.New(logrus.NewEntry(logrus.New())).
 		WithKV(log.KV{"example": "config-custom-controller"})
@@ -47,10 +48,10 @@ func run() error {
 	// Create our retriever so the controller knows how to get/listen for pod events.
 	retr := controller.MustRetrieverFromListerWatcher(&cache.ListWatch{
 		ListFunc: func(options metav1.ListOptions) (runtime.Object, error) {
-			return k8scli.CoreV1().Pods("").List(options)
+			return k8scli.CoreV1().Pods("").List(ctx, options)
 		},
 		WatchFunc: func(options metav1.ListOptions) (watch.Interface, error) {
-			return k8scli.CoreV1().Pods("").Watch(options)
+			return k8scli.CoreV1().Pods("").Watch(ctx, options)
 		},
 	})
 
