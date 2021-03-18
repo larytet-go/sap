@@ -13,6 +13,11 @@ $GOPATH/bin/kind --kubeconfig ./config create cluster
 kind get clusters
 # check the status
 kubectl cluster-info --context kind-kind
+
+# Build the image 
+docker build .
+# Load the image into the cluster
+kind load docker-image ingress
 ```
 
 # Tips
