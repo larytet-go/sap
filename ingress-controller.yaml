@@ -29,6 +29,6 @@ spec:
     spec:
       containers:
       - name: ingress-controller
-        image: ingress-controller:latest
+        image: ingress-controller
         ports:
         - containerPort: 80

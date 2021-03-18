@@ -28,7 +28,7 @@ func run() error {
 	ctx := context.Background()
 	// Initialize logger.
 	logger := kooperlogrus.New(logrus.NewEntry(logrus.New())).
-		WithKV(log.KV{"example": "config-custom-controller"})
+		WithKV(log.KV{"example": "ingress-controller"})
 
 	// Get k8s client.
 	k8scfg, err := rest.InClusterConfig()
@@ -64,7 +64,7 @@ func run() error {
 
 	// Create the controller with custom configuration.
 	cfg := &controller.Config{
-		Name:      "config-custom-controller",
+		Name:      "ingress-controller",
 		Handler:   hand,
 		Retriever: retr,
 		Logger:    logger,
