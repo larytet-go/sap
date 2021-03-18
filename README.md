@@ -22,7 +22,7 @@ $GOPATH/bin/kind load docker-image ingress-controller:latest
 # How to run Log?
 # $GOPATH/bin/stern_linux_amd64 --tail 1 -n kind ingress 
 # Start the service 
-kubectl apply -f ingress-controller:unique-tag
+kubectl apply -f ingress-controller:latest
 ```
 
 # Tips
