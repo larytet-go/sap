@@ -15,9 +15,9 @@ $GOPATH/bin/kind get clusters
 kubectl cluster-info --context kind-kind
 
 # Build the image 
-docker build -t ingress-controller:latest .
+docker build -t ingress-controller:mylatest .
 # Load the image into the cluster
-$GOPATH/bin/kind load docker-image ingress-controller:latest
+$GOPATH/bin/kind load docker-image ingress-controller:mylatest
 
 # Log
 export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 --tail 1 -n kind ingress

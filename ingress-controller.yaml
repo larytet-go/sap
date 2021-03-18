@@ -16,6 +16,19 @@ spec:
     spec:
       containers:
       - name: ingress-controller
-        image: ingress-controller:latest
+        image: ingress-controller:mylatest
         ports:
         - containerPort: 80
+
+kind: Pod
+apiVersion: v1
+metadata:
+  name: ingress-controller
+  labels:
+    app: http-echo
+spec:
+  containers:
+  - name: bar-app
+    image: hashicorp/http-echo:0.2.3
+    args:
+    - "-text=bar"
