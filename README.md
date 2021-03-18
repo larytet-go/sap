@@ -15,9 +15,9 @@ kind get clusters
 kubectl cluster-info --context kind-kind
 
 # Build the image 
-docker build .
+docker build -t ingress-controller:latest .
 # Load the image into the cluster
-kind load docker-image ingress-controller
+kind load docker-image ingress-controller:latest
 ```
 
 # Tips
