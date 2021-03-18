@@ -10,14 +10,16 @@ export KUBECONFIG=./config
 $GOPATH/bin/kind --kubeconfig ./config create cluster
 
 # list clusters 
-kind get clusters
+$GOPATH/bin/kind get clusters
 # check the status
 kubectl cluster-info --context kind-kind
 
 # Build the image 
 docker build -t ingress-controller:latest .
 # Load the image into the cluster
-kind load docker-image ingress-controller:latest
+$GOPATH/bin/kind load docker-image ingress-controller:latest
+
+# Manifest?
 ```
 
 # Tips
