@@ -1,5 +1,12 @@
 
+# Installation
 
+Create a cluster using https://kind.sigs.k8s.io/docs/user/quick-start/
+```
+GO111MODULE="on" go get sigs.k8s.io/kind@v0.10.0
+~/go/bin/kind create cluster
+$GOPATH/bin/kind create cluster
+```
 
 # Tips
 
