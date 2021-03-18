@@ -90,6 +90,7 @@ func run() error {
 }
 
 func main() {
+	fmt.Printf("ingress controller main\n")
 	err := run()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error running app: %s", err)
