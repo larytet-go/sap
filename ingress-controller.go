@@ -55,8 +55,19 @@ func NewPodEventsHandler() *podEventsHandler {
 
 	m := http.NewServeMux()
    	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		msg := fmt.Sprintf("hello %s", r.URL.String())
-		w.Write([]byte(msg))
+		urlPath := r.URL.Path
+		if endPoint, ok := h.endPoints[urlPath]; ok {
+			// Cutting corners: I need a proxy here, I/O streaming, etc
+			// Meanwhile only HTTP GET, no URL params
+			ipAddr := fmt.Sprintf("http://%s:%d", endPoint.pod.Status.PodIP, endPoint.port.Port)
+			resp, _ := http.Get(ipAddr)
+			defer resp.Body.Close()
+			body, _ := io.ReadAll(resp.Body)
+			w.Write(body)
+		} else {
+			msg := fmt.Sprintf("I do not have '%s'", urlPath)
+			w.Write([]byte(msg))
+		}
 	})
 
    	s := &http.Server{
