@@ -24,7 +24,9 @@ import (
 	kooperlogrus "github.com/spotahome/kooper/v2/log/logrus"
 )
 
-var logger *kooper.Logger
+var (
+	logger *kooper.Logger
+)
 
 type PodEventsHandler struct {
 	pods map[string]*corev1.Pod
@@ -32,7 +34,7 @@ type PodEventsHandler struct {
 
 func (h *PodEventsHandler) fullName(pod *corev1.Pod) {
 	podName, podNamespace := pod.Name, pod.Namespace
-	return fmt.Sprintf("%s/%s", podNamespace, podName
+	return fmt.Sprintf("%s/%s", podNamespace, podName)
 }
 
 func (h *PodEventsHandler) handler(_ context.Context, obj runtime.Object) error {
