@@ -33,8 +33,10 @@ kubectl get pods
 
 Try Echo 
 ```sh
+# Use mapping 
 curl http://127.0.0.1:8080/echo
-# curl http://127.0.0.1:8080/default/echo-app
+# Explicit service name
+curl http://127.0.0.1:8080/default/echo-app
 ```
 
 Log
