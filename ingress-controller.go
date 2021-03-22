@@ -97,7 +97,7 @@ func (h *podEventsHandler) handler(_ context.Context, obj runtime.Object) error 
 	pod := obj.(*corev1.Pod)
 	podStatus := pod.Status
 	switch podStatus.Phase {
-	case corev1.PodPending, corev1.PodRunning, corev1.PodSucceeded:
+	case corev1.PodRunning:
 		h.addPod(pod)
 	default:
 		h.removePod(pod)

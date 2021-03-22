@@ -11,6 +11,6 @@ spec:
     image: hashicorp/http-echo:0.2.3
     args:
     - "-text=echo"
-    - "-listen=8080"
+    - "-listen=:5688"
     ports:
-    - containerPort: 8080
+    - containerPort: 5688
