@@ -1,5 +1,5 @@
 
-# Installation
+# Usage
 
 ```sh
 # Create a cluster using https://kind.sigs.k8s.io/docs/user/quick-start/
