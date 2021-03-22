@@ -35,9 +35,13 @@ var (
 
 type (
 	endPoint struct {
-		name      string
-		port      corev1.ContainerPort
-		pod       *corev1.Pod
+		// Container name, for example  "default/echo-app/..."
+		name  string
+		// This is container.Ports[0]
+		port corev1.ContainerPort
+		// I need pod for pod.Status.PodIP
+		pod *corev1.Pod
+		// In case I need a debug log I keep the container as well
 		container corev1.Container
 	}	
 
@@ -52,6 +56,7 @@ type (
 	}
 )
 
+// List of keys in a map
 func getKeys(m map[string]endPoint) []string {
 	keys := make([]string, len(m))
 	for key := range m {
@@ -60,6 +65,7 @@ func getKeys(m map[string]endPoint) []string {
 	return keys	
 }
 
+// List of keys in a map
 func getKeys2(m map[string]string) []string {
 	keys := make([]string, len(m))
 	for key := range m {
@@ -68,8 +74,8 @@ func getKeys2(m map[string]string) []string {
 	return keys	
 }
 
+// Load comma separated tuples (host:service) from the envVar RULES
 // Cutting corners: use environment variable RULES
-// Comma separated tuples (host:service)
 func loadRules() (host2service map[string]string) {
 	host2service = map[string]string{}
 	enVarRules := os.Getenv("RULES")
@@ -87,6 +93,7 @@ func loadRules() (host2service map[string]string) {
 	return
 }
 
+// Create a new event handler: HTTP mux, HTTP proxy
 func NewPodEventsHandler() *podEventsHandler {
 	podEventsHandler := &podEventsHandler {
 		processedPods: map[string]*corev1.Pod{},
@@ -105,6 +112,8 @@ func NewPodEventsHandler() *podEventsHandler {
    	return podEventsHandler
 }
 
+// Show end points if an error
+// Cutting corners: always 200, OK
 func (h *podEventsHandler) showList(w http.ResponseWriter, r *http.Request, err string) {
 	// Cutting corners: not thread safe
 	msg := fmt.Sprintf("I do not have '%s'\nI have %v\n%v\n", err, getKeys(h.endPoints), getKeys2(h.rules))
@@ -123,6 +132,9 @@ func (h *podEventsHandler) lookupService(path string) (endPoint, bool) {
 	return endPoint, ok
 }
 
+// This is "reverse proxy"
+// Cutting corners: I need a real reverse proxy here, I/O streaming, load balancer, etc
+// Meanwhile only HTTP GET, no URL params
 func (h *podEventsHandler) muxHandleFunc(w http.ResponseWriter, r *http.Request)  {
 	urlPath := r.URL.Path
 	if len(urlPath) < 1 {
@@ -136,8 +148,6 @@ func (h *podEventsHandler) muxHandleFunc(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Cutting corners: I need a real reverse proxy here, I/O streaming, load balancer, etc
-	// Meanwhile only HTTP GET, no URL params
 	ipAddr := fmt.Sprintf("http://%s:%d", endPoint.pod.Status.PodIP, endPoint.port.ContainerPort)
 	resp, _ := http.Get(ipAddr)
 	defer resp.Body.Close()
@@ -156,6 +166,7 @@ func (h *podEventsHandler) fullNameContainer(pod *corev1.Pod, container corev1.C
 }
 
 // See if there are declared ports in a newly added pod
+// Add the service to the services I care about
 func (h *podEventsHandler) addPod(pod *corev1.Pod) {
 	fullName := h.fullName(pod)
 	// Cutting corners: not thread safe
@@ -183,6 +194,7 @@ func (h *podEventsHandler) addPod(pod *corev1.Pod) {
 	}
 }
 
+// Anything not "RUNNING" will remove the endpoint
 func (h *podEventsHandler) removePod(pod *corev1.Pod) {
 	fullName, podStatus := h.fullName(pod), pod.Status
 	// Cutting corners: not thread safe
@@ -202,11 +214,13 @@ func (h *podEventsHandler) handler(_ context.Context, obj runtime.Object) error 
 	case corev1.PodRunning:
 		h.addPod(pod)
 	default:
+		// Anything not "RUNNING" will remove the endpoint
 		h.removePod(pod)
 	}
 	return nil
 }
 
+// Cutting corners: let the package "kooper" do it's magic 
 func run() error {
 	ctx := context.Background()
 	// Initialize logger.
