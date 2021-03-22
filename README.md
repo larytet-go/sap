@@ -14,19 +14,25 @@ $GOPATH/bin/kind --kubeconfig ./config --config kind.yaml create cluster
 $GOPATH/bin/kind get clusters
 # check the status
 kubectl cluster-info --context kind-kind
+```
 
-# Build the image 
+Build the image 
+```
 docker build -t ingress-controller:mylatest .
 # Load the image into the cluster
 $GOPATH/bin/kind load docker-image ingress-controller:mylatest
+```
 
-# Start the service 
+Start the service 
+```
 kubectl apply -f ./echo.yaml && kubectl get all
 kubectl apply -f ./ingress-controller.yaml && kubectl get all
 # kubectl get all
 kubectl get pods
+```
 
-# Echo 
+Try Echo 
+```
 curl http://127.0.0.1:8080/echo
 # curl http://127.0.0.1:8080/default/echo-app
 ```
