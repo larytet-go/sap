@@ -40,9 +40,9 @@ metadata:
   name: ingress-controller
   namespace: default
 subjects:
-- kind: User
+- kind: ServiceAccount
   name: ingress-controller
-  apiGroup: rbac.authorization.k8s.io
+  apiGroup: ""
 roleRef:
   kind: Role
   name: ingress-controller
