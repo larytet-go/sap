@@ -20,7 +20,6 @@ docker build -t ingress-controller:mylatest .
 # Load the image into the cluster
 $GOPATH/bin/kind load docker-image ingress-controller:mylatest
 
-
 # Start the service 
 kubectl apply -f ./echo.yaml && kubectl get all
 kubectl apply -f ./ingress-controller.yaml && kubectl get all
