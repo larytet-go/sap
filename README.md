@@ -34,7 +34,7 @@ curl http://127.0.0.1:8080/echo
 
 Log
 ```
-export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 ingress
+export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 ".*"
 ```
 
 Restart the controller 
