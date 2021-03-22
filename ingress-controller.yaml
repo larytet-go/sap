@@ -23,12 +23,11 @@ spec:
 
 # This is straight from https://kubernetes.io/docs/reference/access-authn-authz/rbac/
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  namespace: default
   name: ingress-controller
 rules:
-- apiGroups: [""] # "" indicates the core API group
+- apiGroups: [""]
   resources: ["pods"]
   verbs: ["get", "watch", "list"]
 
