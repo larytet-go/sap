@@ -58,6 +58,16 @@ func getKeys(m map[string]endPoint) []string {
 	return keys	
 }
 
+func getKeys2(m map[string]string) []string {
+	keys := make([]string, len(m))
+	for key := range m {
+		keys = append(keys, key)
+	}
+	return keys	
+}
+
+// Cutting corners: use environment variable RULES
+// Comma separated tuples (host:service)
 func (h *podEventsHandler) loadRules() {
 	enVarRules := os.Getenv("RULES")
 	rules := strings.Split(enVarRules, ",")
@@ -79,7 +89,7 @@ func NewPodEventsHandler() *podEventsHandler {
 	podEventsHandler := &podEventsHandler {
 		processedPods: map[string]*corev1.Pod{},
 		endPoints:     map[string]endPoint{},
-		rules:         map[string]string,
+		rules:         map[string]string{},
 	}
 
 	m := http.NewServeMux()
@@ -95,7 +105,7 @@ func NewPodEventsHandler() *podEventsHandler {
 
 func (h *podEventsHandler) showList(w http.ResponseWriter, r *http.Request, err string) {
 	// Cutting corners: not thread safe
-	msg := fmt.Sprintf("I do not have '%s'\nI have %v\n%v\n", err, getKeys(h.endPoints), getKeys(h.rules))
+	msg := fmt.Sprintf("I do not have '%s'\nI have %v\n%v\n", err, getKeys(h.endPoints), getKeys2(h.rules))
 	w.Write([]byte(msg))
 }
 
@@ -107,25 +117,24 @@ func (h *podEventsHandler) lookupService(path string) (endPoint, bool) {
 		endPoint, ok := h.endPoints[serviceName]
 		return endPoint, ok
 	}
-	serviceName, ok = h.endPoints[path];
+	endPoint, ok := h.endPoints[path];
 	return endPoint, ok
 }
 
 func (h *podEventsHandler) muxHandleFunc(w http.ResponseWriter, r *http.Request)  {
-	endPoints := h.endPoints
 	urlPath := r.URL.Path
 	if len(urlPath) < 1 {
 		h.showList(w, r, "")
 		return
 	}
 	urlPath = urlPath[1:]
-	endPoint, ok := lookupService(urlPath)
+	endPoint, ok := h.lookupService(urlPath)
 	if !ok {
 		h.showList(w, r, urlPath)
 		return
 	}
 
-	// Cutting corners: I need a reerse proxy here, I/O streaming, load balancer, etc
+	// Cutting corners: I need a real reverse proxy here, I/O streaming, load balancer, etc
 	// Meanwhile only HTTP GET, no URL params
 	ipAddr := fmt.Sprintf("http://%s:%d", endPoint.pod.Status.PodIP, endPoint.port.ContainerPort)
 	resp, _ := http.Get(ipAddr)

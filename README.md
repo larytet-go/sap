@@ -49,6 +49,7 @@ List of ports to expose from the container. Exposing a port here gives the syste
 docker build -t ingress-controller:mylatest . && \
 $GOPATH/bin/kind load docker-image ingress-controller:mylatest && \
 kubectl scale --replicas=0 deployment.apps/ingress-controller && \
+kubectl apply -f ./ingress-controller.yaml && \
 kubectl scale --replicas=1 deployment.apps/ingress-controller  && \
 kubectl get all
 ```
