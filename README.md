@@ -32,7 +32,10 @@ export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 ingress &
 
 # Echo 
 curl http://127.0.0.1:8080/default/echo-app
+```
 
+Restart the controller 
+```
 # Restart the service
 # kubectl delete pod/ingress-controller && kubectl apply -f ./ingress-controller.yaml && kubectl get all
 kubectl scale --replicas=0 deployment.apps/ingress-controller
