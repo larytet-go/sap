@@ -86,8 +86,9 @@ func loadRules() (host2service map[string]string) {
 			logger.Errorf("Failed to parse rule %s, index %d", rule, ruleIdx+1)
 			continue
 		}
+		ws := "\t \n"
 		hostname, serviceName := ruleTuple[0], ruleTuple[1]
-		hostname, serviceName = strings.Trim(hostname, "\t \n"), strings.Trim(serviceName, "\t \n")
+		hostname, serviceName = strings.Trim(hostname, ws), strings.Trim(serviceName, ws)
 		host2service[hostname] = serviceName
 	}
 	logger.Infof("Loaded rules: %v", host2service)
