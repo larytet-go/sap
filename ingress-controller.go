@@ -20,19 +20,19 @@ import (
 	"k8s.io/client-go/util/homedir"
 
 	"github.com/spotahome/kooper/v2/controller"
-	"github.com/spotahome/kooper/v2/log"
+	kooperlog "github.com/spotahome/kooper/v2/log"
 	kooperlogrus "github.com/spotahome/kooper/v2/log/logrus"
 )
 
 var (
-	logger *kooper.Logger
+	logger *kooperlog.Logger
 )
 
 type PodEventsHandler struct {
 	pods map[string]*corev1.Pod
 }
 
-func (h *PodEventsHandler) fullName(pod *corev1.Pod) {
+func (h *PodEventsHandler) fullName(pod *corev1.Pod) string {
 	podName, podNamespace := pod.Name, pod.Namespace
 	return fmt.Sprintf("%s/%s", podNamespace, podName)
 }
