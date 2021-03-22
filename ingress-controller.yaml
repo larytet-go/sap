@@ -23,8 +23,9 @@ spec:
         # Cutting corners: I CustomResourceDefinition
         # Meanwhile a single environment variable which rules them all
         env:
-        - name: RULES
-          value: ""
+        - name: "RULES"
+          # comma separaed tuples (host:path)
+          value: "echo:default/echo-app"
 
 ---
 
