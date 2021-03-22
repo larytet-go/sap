@@ -33,14 +33,14 @@ rules:
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
   name: ingress-controller
   namespace: default
 subjects:
 - kind: ServiceAccount
-  name: ingress-controller
-  apiGroup: ""
+  name: default
+  namespace: default
 roleRef:
   kind: ClusterRole
   name: ingress-controller
