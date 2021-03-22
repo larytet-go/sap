@@ -28,47 +28,72 @@ var (
 	logger kooperlog.Logger
 )
 
-type PodEventsHandler struct {
-	pods map[string]*corev1.Pod
-}
 
-func (h *PodEventsHandler) fullName(pod *corev1.Pod) string {
+type (
+	endPoint struct {
+		name      string
+		port      corev1.ContainerPort
+		pod       *corev1.Pod
+		container corev1.Container
+	}	
+
+	podEventsHandler struct {
+		// I need a fast lookup for not relevant events in the cluster
+		// and a map of endpoints
+		processedPods map[string]*corev1.Pod
+		endPoints     map[string]endPoint
+	}
+)
+
+func (h *podEventsHandler) fullName(pod *corev1.Pod) string {
 	podName, podNamespace := pod.Name, pod.Namespace
 	return fmt.Sprintf("%s/%s", podNamespace, podName)
 }
 
+func (h *podEventsHandler) fullNameContainer(pod *corev1.Pod, container corev1.Container) string {
+	podName, podNamespace, containerName := pod.Name, pod.Namespace, container.Name
+	return fmt.Sprintf("%s/%s/%s", podNamespace, podName, containerName)
+}
+
 // See if there are declared ports in a newly added pod
-func (h *PodEventsHandler) addPod(pod *corev1.Pod) {
+func (h *podEventsHandler) addPod(pod *corev1.Pod) {
 	fullName := h.fullName(pod)
-	if _, ok := h.pods[fullName];ok {
+	if _, ok := h.processedPods[fullName];ok {
 		return 
 	}
 	podStatus := pod.Status
 	logger.Infof("Adding pod %s phase %s", fullName, podStatus.Phase)
-	h.pods[fullName] = pod
+	h.processedPods[fullName] = pod
 	podSpec := pod.Spec
 	podContainers := podSpec.Containers
 	for _, container := range(podContainers) {
-		containerName, containrPorts := container.Name, container.Ports
-		if len(containrPorts) == 0 {
+		containerName, containerPorts := h.fullNameContainer(pod, container), container.Ports
+		if len(containerPorts) == 0 {
 			continue
 		}
-		logger.Infof("Container %s/%s ports %v", fullName, containerName, containrPorts)
+
+		logger.Infof("Container %s ports %v", containerName, containerPorts)
+		h.endPoints[fullName] = endPoint{
+			name:      containerName,
+			port:      containerPorts[0],
+			pod:       pod,
+			container: container,
+		}	
 	}
 }
 
-func (h *PodEventsHandler) removePod(pod *corev1.Pod) {
+func (h *podEventsHandler) removePod(pod *corev1.Pod) {
 	fullName := h.fullName(pod)
-	if _, ok := h.pods[fullName];!ok {
+	if _, ok := h.processedPods[fullName];!ok {
 		return 
 	}
 	podStatus := pod.Status
 	logger.Infof("Remove pod %s phase %s", fullName, podStatus.Phase)
-	delete(h.pods, fullName)
+	delete(h.processedPods, fullName)
 }
 
 // Track the pods life cycle
-func (h *PodEventsHandler) handler(_ context.Context, obj runtime.Object) error {
+func (h *podEventsHandler) handler(_ context.Context, obj runtime.Object) error {
 	pod := obj.(*corev1.Pod)
 	podStatus := pod.Status
 	switch podStatus.Phase {
@@ -111,8 +136,9 @@ func run() error {
 		},
 	})
 
-	podEventsHandler := &PodEventsHandler {
-		pods: map[string]*corev1.Pod{},
+	podEventsHandler := &podEventsHandler {
+		processedPods: map[string]*corev1.Pod{},
+		endPoints:     map[string]endPoint{},
 	}
 	hand := controller.HandlerFunc(podEventsHandler.handler)
 
@@ -152,3 +178,4 @@ func main() {
 	
 	os.Exit(0)
 }
+
