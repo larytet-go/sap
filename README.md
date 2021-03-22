@@ -1,7 +1,7 @@
 
 # Installation
 
-```
+```sh
 # Create a cluster using https://kind.sigs.k8s.io/docs/user/quick-start/
 GO111MODULE="on" go get sigs.k8s.io/kind@v0.10.0
 # Make sure that no other configurations are impacted
@@ -17,14 +17,14 @@ kubectl cluster-info --context kind-kind
 ```
 
 Build the image 
-```
+```sh
 docker build -t ingress-controller:mylatest .
 # Load the image into the cluster
 $GOPATH/bin/kind load docker-image ingress-controller:mylatest
 ```
 
 Start the service 
-```
+```sh
 kubectl apply -f ./echo.yaml && kubectl get all
 kubectl apply -f ./ingress-controller.yaml && kubectl get all
 # kubectl get all
@@ -32,18 +32,18 @@ kubectl get pods
 ```
 
 Try Echo 
-```
+```sh
 curl http://127.0.0.1:8080/echo
 # curl http://127.0.0.1:8080/default/echo-app
 ```
 
 Log
-```
+```sh
 export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 ".*"
 ```
 
 Restart the controller 
-```
+```sh
 # kubectl delete pod/ingress-controller && kubectl apply -f ./ingress-controller.yaml && kubectl get all
 kubectl scale --replicas=0 deployment.apps/ingress-controller
 kubectl scale --replicas=1 deployment.apps/ingress-controller
@@ -53,7 +53,7 @@ kubectl scale --replicas=1 deployment.apps/ingress-controller
 
 List of ports to expose from the container. Exposing a port here gives the system additional information about the network connections a container uses, but is primarily informational. Not specifying a port here DOES NOT prevent that port from being exposed. Any port which is listening on the default "0.0.0.0" address inside a container will be accessible from the network. Cannot be updated.
 
-```
+```sh
 docker build -t ingress-controller:mylatest . && \
 $GOPATH/bin/kind load docker-image ingress-controller:mylatest && \
 kubectl scale --replicas=0 deployment.apps/ingress-controller && \
@@ -62,11 +62,11 @@ kubectl scale --replicas=1 deployment.apps/ingress-controller  && \
 kubectl get all
 ```
 
-```
+```sh
 kubectl delete pod echo-app && kubectl apply -f ./echo.yaml && kubectl get all
 ```
 
-```
+```sh
 kubectl get pods | grep ingress | awk '{print $1}' | xargs -I{} kubectl exec {}  -- curl --silent http://10.244.0.7:5688
 ```
 
