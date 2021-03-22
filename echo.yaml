@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Pod
+apiVersion: v1
+metadata:
+  name: ingress-controller
+  labels:
+    app: http-echo
+spec:
+  containers:
+  - name: echo-app
+    image: hashicorp/http-echo:0.2.3
+    args:
+    - "-text=echo"
