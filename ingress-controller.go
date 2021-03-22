@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	logger *kooperlog.Logger
+	logger kooperlog.Logger
 )
 
 type PodEventsHandler struct {
