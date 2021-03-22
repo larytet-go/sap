@@ -43,7 +43,7 @@ func (h *PodEventsHandler) addPod(pod *corev1.Pod) {
 		return 
 	}
 	podStatus := pod.Status
-	logger.Infof("Add pod %s status %v phase %s", fullName, podStatus.Phase)
+	logger.Infof("Add pod %s phase %s", fullName, podStatus.Phase)
 	h.pods[fullName] = pod
 }
 
@@ -53,7 +53,7 @@ func (h *PodEventsHandler) removePod(pod *corev1.Pod) {
 		return 
 	}
 	podStatus := pod.Status
-	logger.Infof("Remove pod %s status %v phase %s", fullName, podStatus.Phase)
+	logger.Infof("Remove pod %s phase %s", fullName, podStatus.Phase)
 	delete(h.pods, fullName)
 }
 
