@@ -23,6 +23,7 @@ $GOPATH/bin/kind load docker-image ingress-controller:mylatest
 export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 ingress
 
 # Start the service 
+kubectl apply -f ./roles.yaml
 kubectl apply -f ./echo.yaml && kubectl get all
 kubectl apply -f ./ingress-controller.yaml && kubectl get all
 # kubectl get all
