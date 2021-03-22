@@ -24,10 +24,11 @@ export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 --tail 1 -n kind ing
 
 # Start the service 
 kubectl apply -f ./ingress-controller.yaml
+# kubectl get all
 kubectl get pods
 
 # Restart the service
-kubectl scale --replicas=0 -f ./ingress-controller.yaml
+kubectl delete pod/ingress-controller && kubectl get all
 ```
 
 # Tips
@@ -45,3 +46,4 @@ List of ports to expose from the container. Exposing a port here gives the syste
 * https://kind.sigs.k8s.io/docs/user/quick-start/
 * https://github.com/kubernetes/client-go/issues/741  - package dependencies k8s 1.19
 * https://app.slack.com/client/T09NY5SBT/CEKK1KTN2  - kind slack
+
