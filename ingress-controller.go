@@ -84,10 +84,10 @@ func (h *podEventsHandler) addPod(pod *corev1.Pod) {
 
 func (h *podEventsHandler) removePod(pod *corev1.Pod) {
 	fullName, podStatus := h.fullName(pod), pod.Status
-	logger.Infof("Removing pod %s phase %s", fullName, podStatus.Phase)
 	if _, ok := h.processedPods[fullName];!ok {
 		return 
 	}
+	logger.Infof("Removing pod %s phase %s", fullName, podStatus.Phase)
 	delete(h.processedPods, fullName)
 	delete(h.endPoints, fullName)
 }
