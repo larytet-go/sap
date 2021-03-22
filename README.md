@@ -31,7 +31,8 @@ kubectl get pods
 export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 ingress
 
 # Echo 
-curl http://127.0.0.1:8080/default/echo-app
+curl http://127.0.0.1:8080/echo
+# curl http://127.0.0.1:8080/default/echo-app
 ```
 
 Restart the controller 
