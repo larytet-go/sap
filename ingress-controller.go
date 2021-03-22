@@ -223,9 +223,6 @@ func (h *podEventsHandler) handler(_ context.Context, obj runtime.Object) error 
 // Cutting corners: let the package "kooper" do it's magic 
 func run() error {
 	ctx := context.Background()
-	// Initialize logger.
-	logger = kooperlogrus.New(logrus.NewEntry(logrus.New())).
-		WithKV(kooperlog.KV{"example": "ingress-controller"})
 
 	// Get k8s client.
 	k8scfg, err := rest.InClusterConfig()
@@ -271,7 +268,7 @@ func run() error {
 		return fmt.Errorf("could not create controller: %w", err)
 	}
 
-	// Start our controller.
+	// Start the controller.
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	err = ctrl.Run(ctx)
@@ -283,6 +280,9 @@ func run() error {
 }
 
 func main() {
+	// Initialize kooper logger.
+	// What is "example"?
+	logger = kooperlogrus.New(logrus.NewEntry(logrus.New())).WithKV(kooperlog.KV{"example": "ingress-controller"})
 	err := run()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error running app: %s", err)
