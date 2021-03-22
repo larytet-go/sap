@@ -28,7 +28,7 @@ metadata:
     app: http-echo
 spec:
   containers:
-  - name: bar-app
+  - name: echo-app
     image: hashicorp/http-echo:0.2.3
     args:
-    - "-text=bar"
+    - "-text=echo"
