@@ -37,12 +37,14 @@ func (h *PodEventsHandler) fullName(pod *corev1.Pod) string {
 	return fmt.Sprintf("%s/%s", podNamespace, podName)
 }
 
+// Track the pods using the local map
 func (h *PodEventsHandler) handler(_ context.Context, obj runtime.Object) error {
 	pod := obj.(*corev1.Pod)
 	fullName := h.fullName(pod)
 	if _, ok := h.pods[fullName];ok {
 		return nil
 	}
+	h.pods[fullName] = pod
 	logger.Infof("Pod added: %s", fullName)
 	return nil
 }
@@ -82,12 +84,12 @@ func run() error {
 	podEventsHandler := &PodEventsHandler {
 		pods: map[string]*corev1.Pod{},
 	}
+	hand := controller.HandlerFunc(podEventsHandler.handler)
 
 	// Create the controller with custom configuration.
 	cfg := &controller.Config{
 		Name:      "ingress-controller",
-		// Our domain logic that will print every add/sync/update and delete event we .
-		Handler:   controller.HandlerFunc(podEventsHandler.handler),
+		Handler:   hand,
 		Retriever: retr,
 		Logger:    logger,
 
