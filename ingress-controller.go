@@ -90,6 +90,7 @@ func (h *podEventsHandler) removePod(pod *corev1.Pod) {
 	podStatus := pod.Status
 	logger.Infof("Remove pod %s phase %s", fullName, podStatus.Phase)
 	delete(h.processedPods, fullName)
+	delete(h.endPoints, fullName)
 }
 
 // Track the pods life cycle
