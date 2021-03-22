@@ -14,5 +14,4 @@ RUN GOOS=linux CGO_ENABLED=1 GOARCH=amd64 go build -a -o ./ingress-controller ./
 RUN ls -al
 # RUN go test -v -failfast ./...
 
-# CMD ["gdbserver", ":2020", "python3", "service.py"]
 CMD ["./ingress-controller"]
