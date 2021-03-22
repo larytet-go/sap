@@ -52,7 +52,7 @@ func run() error {
 	ctx := context.Background()
 	// Initialize logger.
 	logger = kooperlogrus.New(logrus.NewEntry(logrus.New())).
-		WithKV(log.KV{"example": "ingress-controller"})
+		WithKV(kooperlog.KV{"example": "ingress-controller"})
 
 	// Get k8s client.
 	k8scfg, err := rest.InClusterConfig()
