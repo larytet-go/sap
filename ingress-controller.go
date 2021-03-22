@@ -179,7 +179,10 @@ func (h *podEventsHandler) addPod(pod *corev1.Pod) {
 	podSpec := pod.Spec
 	podContainers := podSpec.Containers
 	for _, container := range(podContainers) {
+		// Get the pod's spec->containers->ports
 		containerName, containerPorts := h.fullNameContainer(pod, container), container.Ports
+		// Cutting corners: I could check all ports the container listens to
+		// intead of relying on the configuation
 		if len(containerPorts) == 0 {
 			continue
 		}
