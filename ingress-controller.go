@@ -122,6 +122,11 @@ func (h *podEventsHandler) showList(w http.ResponseWriter, r *http.Request, err 
 	w.Write([]byte(msg))
 }
 
+func (h *podEventsHandler) showStatus(w http.ResponseWriter, r *http.Request) {
+	msg := fmt.Sprintf("%v\n%v\n",h.endPoints, h.rules)
+	w.Write([]byte(msg))
+}
+
 // Check rules first. If no such rule try the fallback - the full service name 
 func (h *podEventsHandler) lookupService(path string) (endPoint, bool) {
 	// Cutting corners: not thread safe
@@ -144,6 +149,11 @@ func (h *podEventsHandler) muxHandleFunc(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	urlPath = urlPath[1:]
+	switch urlPath {
+		case "ingress":
+		h.showStatus(w, r)
+		return
+	}
 	endPoint, ok := h.lookupService(urlPath)
 	if !ok {
 		h.showList(w, r, urlPath)
