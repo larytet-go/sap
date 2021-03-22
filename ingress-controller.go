@@ -94,7 +94,7 @@ func (h *podEventsHandler) muxHandleFunc(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Cutting corners: I need a proxy here, I/O streaming, load balancer, etc
+	// Cutting corners: I need a reerse proxy here, I/O streaming, load balancer, etc
 	// Meanwhile only HTTP GET, no URL params
 	ipAddr := fmt.Sprintf("http://%s:%d", endPoint.pod.Status.PodIP, endPoint.port.ContainerPort)
 	resp, _ := http.Get(ipAddr)
