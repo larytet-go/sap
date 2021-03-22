@@ -42,13 +42,13 @@ func (h *PodEventsHandler) handler(_ context.Context, obj runtime.Object) error 
 	pod := obj.(*corev1.Pod)
 	fullName := h.fullName(pod)
 	if _, ok := h.pods[fullName];ok {
+		logger.Infof("Pod already exists: %s", fullName)
 		return nil
 	}
 	h.pods[fullName] = pod
 	logger.Infof("Pod added: %s", fullName)
 	return nil
 }
-
 
 func run() error {
 	ctx := context.Background()
