@@ -87,7 +87,7 @@ func run() error {
 	cfg := &controller.Config{
 		Name:      "ingress-controller",
 		// Our domain logic that will print every add/sync/update and delete event we .
-		Handler:   podEventsHandler.handler,
+		Handler:   controller.HandlerFunc(podEventsHandler.handler),
 		Retriever: retr,
 		Logger:    logger,
 
