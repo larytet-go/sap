@@ -49,6 +49,9 @@ kubectl scale --replicas=1 deployment.apps/ingress-controller  && \
 kubectl get all
 ```
 
+```
+kubectl get pods | grep ingress | awk '{print $1}' | xargs -I{} kubectl exec {}  -- curl http://echo-app:5688
+```
 
 # Links
 

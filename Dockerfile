@@ -7,6 +7,8 @@ COPY go.mod ./
 RUN go mod download
 RUN cat go.mod
 RUN cat go.sum
+RUN apt-get -y update
+RUN apt-get -y install curl
 
 COPY *.go ./
 
