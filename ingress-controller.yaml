@@ -25,6 +25,7 @@ spec:
         env:
         - name: "RULES"
           # comma separaed tuples (host:path)
+          # Intentionaly no port - I know to figire out the pods ports
           value: "echo:default/echo-app"
 
 ---
