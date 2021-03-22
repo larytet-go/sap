@@ -68,10 +68,10 @@ func getKeys2(m map[string]string) []string {
 
 // Cutting corners: use environment variable RULES
 // Comma separated tuples (host:service)
-func (h *podEventsHandler) loadRules() {
+func loadRules() (host2service map[string]string) {
+	host2service = map[string]string{}
 	enVarRules := os.Getenv("RULES")
 	rules := strings.Split(enVarRules, ",")
-	loadedRulesCount := 0
 	for ruleIdx, rule := range(rules) {
 		ruleTuple := strings.Split(rule, ":")
 		if len(ruleTuple) != 2 {
@@ -79,17 +79,17 @@ func (h *podEventsHandler) loadRules() {
 			continue
 		}
 		hostname, serviceName := ruleTuple[0], ruleTuple[1]
-		h.rules[hostname] = serviceName
-		loadedRulesCount++
+		host2service[hostname] = serviceName
 	}
-	logger.Infof("Loaded %d rules: %v", loadedRulesCount, h.rules)
+	logger.Infof("Loaded rules: %v", host2service)
+	return
 }
 
 func NewPodEventsHandler() *podEventsHandler {
 	podEventsHandler := &podEventsHandler {
 		processedPods: map[string]*corev1.Pod{},
 		endPoints:     map[string]endPoint{},
-		rules:         map[string]string{},
+		rules:         loadRules(),
 	}
 
 	m := http.NewServeMux()

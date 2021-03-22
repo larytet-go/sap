@@ -37,6 +37,7 @@ spec:
   type: NodePort
   ports:
   - name: http
+    # Warning: check kind.yaml 
     nodePort: 30950
     port: 80
   selector:
