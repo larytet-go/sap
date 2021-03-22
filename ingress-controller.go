@@ -24,10 +24,32 @@ import (
 	kooperlogrus "github.com/spotahome/kooper/v2/log/logrus"
 )
 
+var logger *kooper.Logger
+
+type PodEventsHandler struct {
+	pods map[string]*corev1.Pod
+}
+
+func (h *PodEventsHandler) fullName(pod *corev1.Pod) {
+	podName, podNamespace := pod.Name, pod.Namespace
+	return fmt.Sprintf("%s/%s", podNamespace, podName
+}
+
+func (h *PodEventsHandler) handler(_ context.Context, obj runtime.Object) error {
+	pod := obj.(*corev1.Pod)
+	fullName := h.fullName(pod)
+	if _, ok := h.pods[fullName];ok {
+		return nil
+	}
+	logger.Infof("Pod added: %s", fullName)
+	return nil
+}
+
+
 func run() error {
 	ctx := context.Background()
 	// Initialize logger.
-	logger := kooperlogrus.New(logrus.NewEntry(logrus.New())).
+	logger = kooperlogrus.New(logrus.NewEntry(logrus.New())).
 		WithKV(log.KV{"example": "ingress-controller"})
 
 	// Get k8s client.
@@ -55,22 +77,20 @@ func run() error {
 		},
 	})
 
-	// Our domain logic that will print every add/sync/update and delete event we .
-	hand := controller.HandlerFunc(func(_ context.Context, obj runtime.Object) error {
-		pod := obj.(*corev1.Pod)
-		logger.Infof("Pod added: %s/%s", pod.Namespace, pod.Name)
-		return nil
-	})
+	podEventsHandler := &PodEventsHandler {
+		pods: map[string]*corev1.Pod{},
+	}
 
 	// Create the controller with custom configuration.
 	cfg := &controller.Config{
 		Name:      "ingress-controller",
-		Handler:   hand,
+		// Our domain logic that will print every add/sync/update and delete event we .
+		Handler:   podEventsHandler.handler,
 		Retriever: retr,
 		Logger:    logger,
 
 		ProcessingJobRetries: 5,
-		ResyncInterval:       45 * time.Second,
+		ResyncInterval:       5 * time.Second,
 		ConcurrentWorkers:    1,
 	}
 	ctrl, err := controller.New(cfg)
@@ -96,10 +116,5 @@ func main() {
 		os.Exit(1)
 	}
 	
-	for {
-		fmt.Printf("ingress controller main\n")
-		time.Sleep(time.Second)
-	}
-
 	os.Exit(0)
 }

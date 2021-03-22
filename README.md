@@ -19,14 +19,16 @@ docker build -t ingress-controller:mylatest .
 # Load the image into the cluster
 $GOPATH/bin/kind load docker-image ingress-controller:mylatest
 
-# Log
-export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 ingress
 
 # Start the service 
 kubectl apply -f ./echo.yaml && kubectl get all
 kubectl apply -f ./ingress-controller.yaml && kubectl get all
 # kubectl get all
 kubectl get pods
+
+# Log
+export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 ingress
+
 
 # Restart the service
 # kubectl delete pod/ingress-controller && kubectl apply -f ./ingress-controller.yaml && kubectl get all
