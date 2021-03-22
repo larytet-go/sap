@@ -59,3 +59,4 @@ kubectl get all
 * https://github.com/kubernetes/client-go/issues/741  - package dependencies k8s 1.19
 * https://app.slack.com/client/T09NY5SBT/CEKK1KTN2  - kind slack
 * https://github.com/kubernetes/sample-controller - another example
+* https://itnext.io/building-an-operator-for-kubernetes-with-the-sample-controller-b4204be9ad56 - Roles example
