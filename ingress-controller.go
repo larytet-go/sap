@@ -45,8 +45,10 @@ type (
 		// I need a fast lookup for not relevant events in the cluster
 		// and a map of endpoints
 		processedPods map[string]*corev1.Pod
-		endPoints     map[string]endPoint
-		rules         map[string]string
+		// Services having exposed ports spec->containers->ports->containerPort
+		endPoints map[string]endPoint
+		// hostname:service mapping I load from the EnvVar RULES
+		rules map[string]string
 	}
 )
 
