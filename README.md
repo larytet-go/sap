@@ -1,8 +1,8 @@
 
 # Installation
 
-Create a cluster using https://kind.sigs.k8s.io/docs/user/quick-start/
 ```
+# Create a cluster using https://kind.sigs.k8s.io/docs/user/quick-start/
 GO111MODULE="on" go get sigs.k8s.io/kind@v0.10.0
 # Make sure that no other configurations are impacted
 export KUBECONFIG=./config
