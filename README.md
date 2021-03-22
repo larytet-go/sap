@@ -71,3 +71,5 @@ kubectl get pods | grep ingress | awk '{print $1}' | xargs -I{} kubectl exec {} 
 * https://github.com/kubernetes/sample-controller - another example
 * https://itnext.io/building-an-operator-for-kubernetes-with-the-sample-controller-b4204be9ad56 - Roles example
 * https://github.com/kubernetes/api/blob/fd88418e43d2da5bce86eeeae341d6477c63e07a/core/v1/types.go  - k8s API
+* https://stackoverflow.com/questions/11738029/how-do-i-unregister-a-handler-in-net-http/11851973  - custom mux
+* https://stackoverflow.com/questions/21978883/how-to-define-custom-mux-with-golang - another example of mux

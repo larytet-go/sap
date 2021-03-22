@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"path/filepath"
 	"time"
@@ -24,6 +25,7 @@ import (
 	kooperlogrus "github.com/spotahome/kooper/v2/log/logrus"
 )
 
+
 var (
 	logger kooperlog.Logger
 )
@@ -44,6 +46,28 @@ type (
 		endPoints     map[string]endPoint
 	}
 )
+
+func NewPodEventsHandler() *podEventsHandler {
+	podEventsHandler := &podEventsHandler {
+		processedPods: map[string]*corev1.Pod{},
+		endPoints:     map[string]endPoint{},
+	}
+
+	m := http.NewServeMux()
+   	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		msg := fmt.Sprintf("hello %s", r.URL.String())
+		w.Write([]byte(msg))
+	})
+
+   	s := &http.Server{
+	   Addr:    ":80",
+	   Handler: m,
+	}
+
+   	go s.ListenAndServe()
+   	return podEventsHandler
+}
+
 
 func (h *podEventsHandler) fullName(pod *corev1.Pod) string {
 	podName, podNamespace := pod.Name, pod.Namespace
@@ -136,10 +160,7 @@ func run() error {
 		},
 	})
 
-	podEventsHandler := &podEventsHandler {
-		processedPods: map[string]*corev1.Pod{},
-		endPoints:     map[string]endPoint{},
-	}
+	podEventsHandler := NewPodEventsHandler()
 	hand := controller.HandlerFunc(podEventsHandler.handler)
 
 	// Create the controller with custom configuration.

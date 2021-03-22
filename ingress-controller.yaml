@@ -39,6 +39,7 @@ metadata:
   namespace: default
 subjects:
 - kind: ServiceAccount
+  # Cutting corners: every pod in the default namespace gets the clusterrole
   name: default
   namespace: default
 roleRef:
