@@ -62,7 +62,7 @@ func (h *podEventsHandler) addPod(pod *corev1.Pod) {
 		return 
 	}
 	podStatus := pod.Status
-	logger.Infof("Adding pod %s phase %s", fullName, podStatus.Phase)
+	logger.Infof("Processing pod %s phase %s", fullName, podStatus.Phase)
 	h.processedPods[fullName] = pod
 	podSpec := pod.Spec
 	podContainers := podSpec.Containers
