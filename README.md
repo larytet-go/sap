@@ -27,12 +27,14 @@ kubectl apply -f ./ingress-controller.yaml && kubectl get all
 # kubectl get all
 kubectl get pods
 
-# Log
-export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 ingress
-
 # Echo 
 curl http://127.0.0.1:8080/echo
 # curl http://127.0.0.1:8080/default/echo-app
+```
+
+Log
+```
+export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 ingress
 ```
 
 Restart the controller 
