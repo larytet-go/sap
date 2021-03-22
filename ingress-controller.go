@@ -37,6 +37,7 @@ func (h *PodEventsHandler) fullName(pod *corev1.Pod) string {
 	return fmt.Sprintf("%s/%s", podNamespace, podName)
 }
 
+// See if there are declared ports in a newly added pod
 func (h *PodEventsHandler) addPod(pod *corev1.Pod) {
 	fullName := h.fullName(pod)
 	if _, ok := h.pods[fullName];ok {
@@ -52,7 +53,7 @@ func (h *PodEventsHandler) addPod(pod *corev1.Pod) {
 		if len(containrPorts) == 0 {
 			continue
 		}
-		logger.Infof("\tContainer %s ports %v", containerName, containrPorts)
+		logger.Infof("Container %s/%s ports %v", fullName, containerName, containrPorts)
 	}
 }
 
