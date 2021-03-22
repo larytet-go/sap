@@ -72,7 +72,7 @@ func (h *podEventsHandler) addPod(pod *corev1.Pod) {
 			continue
 		}
 
-		logger.Infof("Container %s ports %v", containerName, containerPorts)
+		logger.Infof("Container %s, IP %v, ports %v", containerName, podStatus.PodIP, containerPorts)
 		h.endPoints[fullName] = endPoint{
 			name:      containerName,
 			port:      containerPorts[0],

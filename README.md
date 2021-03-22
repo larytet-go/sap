@@ -50,7 +50,11 @@ kubectl get all
 ```
 
 ```
-kubectl get pods | grep ingress | awk '{print $1}' | xargs -I{} kubectl exec {}  -- curl http://echo-app:5688
+kubectl delete pod echo-app && kubectl apply -f ./echo.yaml && kubectl get all
+```
+
+```
+kubectl get pods | grep ingress | awk '{print $1}' | xargs -I{} kubectl exec {}  -- curl --silent http://10.244.0.7:5688
 ```
 
 # Links
