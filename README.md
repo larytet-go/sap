@@ -62,3 +62,4 @@ kubectl get all
 * https://app.slack.com/client/T09NY5SBT/CEKK1KTN2  - kind slack
 * https://github.com/kubernetes/sample-controller - another example
 * https://itnext.io/building-an-operator-for-kubernetes-with-the-sample-controller-b4204be9ad56 - Roles example
+* https://github.com/kubernetes/api/blob/fd88418e43d2da5bce86eeeae341d6477c63e07a/core/v1/types.go  - k8s API

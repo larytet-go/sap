@@ -37,16 +37,36 @@ func (h *PodEventsHandler) fullName(pod *corev1.Pod) string {
 	return fmt.Sprintf("%s/%s", podNamespace, podName)
 }
 
-// Track the pods using the local map
-func (h *PodEventsHandler) handler(_ context.Context, obj runtime.Object) error {
-	pod := obj.(*corev1.Pod)
+func (h *PodEventsHandler) addPod(pod *corev1.Pod) {
 	fullName := h.fullName(pod)
 	if _, ok := h.pods[fullName];ok {
-		return nil
+		return 
 	}
-	h.pods[fullName] = pod
 	podStatus := pod.Status
-	logger.Infof("Pod %s status %v phase %s", fullName, podStatus, podStatus.Phase)
+	logger.Infof("Add pod %s status %v phase %s", fullName, podStatus.Phase)
+	h.pods[fullName] = pod
+}
+
+func (h *PodEventsHandler) removePod(pod *corev1.Pod) {
+	fullName := h.fullName(pod)
+	if _, ok := h.pods[fullName];!ok {
+		return 
+	}
+	podStatus := pod.Status
+	logger.Infof("Remove pod %s status %v phase %s", fullName, podStatus.Phase)
+	delete(h.pods, fullName)
+}
+
+// Track the pods life cycle
+func (h *PodEventsHandler) handler(_ context.Context, obj runtime.Object) error {
+	pod := obj.(*corev1.Pod)
+	podStatus := pod.Status
+	switch podStatus.Phase {
+	case corev1.PodPending, corev1.PodRunning, corev1.PodSucceeded:
+		h.addPod(pod)
+	default:
+		h.removePod(pod)
+	}
 	return nil
 }
 
