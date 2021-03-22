@@ -23,17 +23,25 @@ $GOPATH/bin/kind load docker-image ingress-controller:mylatest
 export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 ingress
 
 # Start the service 
-kubectl apply -f ./ingress-controller.yaml
+kubectl apply -f ./echo.yaml && kubectl get all
+kubectl apply -f ./ingress-controller.yaml && kubectl get all
 # kubectl get all
 kubectl get pods
 
 # Restart the service
-kubectl delete pod/ingress-controller && kubectl apply -f ./ingress-controller.yaml && kubectl get all
+# kubectl delete pod/ingress-controller && kubectl apply -f ./ingress-controller.yaml && kubectl get all
+kubectl scale --replicas=0 deployment.apps/ingress-controller
+kubectl scale --replicas=1 deployment.apps/ingress-controller
 ```
 
 # Tips
 
 List of ports to expose from the container. Exposing a port here gives the system additional information about the network connections a container uses, but is primarily informational. Not specifying a port here DOES NOT prevent that port from being exposed. Any port which is listening on the default "0.0.0.0" address inside a container will be accessible from the network. Cannot be updated.
+
+```
+docker build -t ingress-controller:mylatest . && $GOPATH/bin/kind load docker-image ingress-controller:mylatest
+```
+
 
 # Links
 
