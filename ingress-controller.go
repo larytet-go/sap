@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -45,6 +46,7 @@ type (
 		// and a map of endpoints
 		processedPods map[string]*corev1.Pod
 		endPoints     map[string]endPoint
+		rules         map[string]string
 	}
 )
 
@@ -56,10 +58,28 @@ func getKeys(m map[string]endPoint) []string {
 	return keys	
 }
 
+func (h *podEventsHandler) loadRules() {
+	enVarRules := os.Getenv("RULES")
+	rules := strings.Split(enVarRules, ",")
+	loadedRulesCount := 0
+	for ruleIdx, rule := range(rules) {
+		ruleTuple := strings.Split(rule, ":")
+		if len(ruleTuple) != 2 {
+			logger.Errorf("Failed to parse rule %s, index %d", rule, ruleIdx+1)
+			continue
+		}
+		hostname, serviceName := ruleTuple[0], ruleTuple[1]
+		h.rules[hostname] = serviceName
+		loadedRulesCount++
+	}
+	logger.Infof("Loaded %d rules: %v", loadedRulesCount, h.rules)
+}
+
 func NewPodEventsHandler() *podEventsHandler {
 	podEventsHandler := &podEventsHandler {
 		processedPods: map[string]*corev1.Pod{},
 		endPoints:     map[string]endPoint{},
+		rules:         map[string]string,
 	}
 
 	m := http.NewServeMux()
@@ -75,8 +95,20 @@ func NewPodEventsHandler() *podEventsHandler {
 
 func (h *podEventsHandler) showList(w http.ResponseWriter, r *http.Request, err string) {
 	// Cutting corners: not thread safe
-	msg := fmt.Sprintf("I do not have '%s'\nI have %v\n", err, getKeys(h.endPoints))
+	msg := fmt.Sprintf("I do not have '%s'\nI have %v\n%v\n", err, getKeys(h.endPoints), getKeys(h.rules))
 	w.Write([]byte(msg))
+}
+
+// Check rules first. If no such rule try the fallback - the full service name 
+func (h *podEventsHandler) lookupService(path string) (endPoint, bool) {
+	// Cutting corners: not thread safe
+	serviceName, ok := h.rules[path];
+	if ok {
+		endPoint, ok := h.endPoints[serviceName]
+		return endPoint, ok
+	}
+	serviceName, ok = h.endPoints[path];
+	return endPoint, ok
 }
 
 func (h *podEventsHandler) muxHandleFunc(w http.ResponseWriter, r *http.Request)  {
@@ -87,8 +119,7 @@ func (h *podEventsHandler) muxHandleFunc(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	urlPath = urlPath[1:]
-	// Cutting corners: not thread safe
-	endPoint, ok := endPoints[urlPath];
+	endPoint, ok := lookupService(urlPath)
 	if !ok {
 		h.showList(w, r, urlPath)
 		return
