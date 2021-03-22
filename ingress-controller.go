@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -47,6 +48,14 @@ type (
 	}
 )
 
+func getKeys(m map[string]endPoint) []string {
+	keys := make([]string, len(m))
+	for key := range m {
+		keys = append(keys, key)
+	}
+	return keys	
+}
+
 func NewPodEventsHandler() *podEventsHandler {
 	podEventsHandler := &podEventsHandler {
 		processedPods: map[string]*corev1.Pod{},
@@ -54,22 +63,7 @@ func NewPodEventsHandler() *podEventsHandler {
 	}
 
 	m := http.NewServeMux()
-   	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		urlPath := r.URL.Path
-		if endPoint, ok := h.endPoints[urlPath]; ok {
-			// Cutting corners: I need a proxy here, I/O streaming, etc
-			// Meanwhile only HTTP GET, no URL params
-			ipAddr := fmt.Sprintf("http://%s:%d", endPoint.pod.Status.PodIP, endPoint.port.Port)
-			resp, _ := http.Get(ipAddr)
-			defer resp.Body.Close()
-			body, _ := io.ReadAll(resp.Body)
-			w.Write(body)
-		} else {
-			msg := fmt.Sprintf("I do not have '%s'", urlPath)
-			w.Write([]byte(msg))
-		}
-	})
-
+   	m.HandleFunc("/", podEventsHandler.muxHandleFunc)
    	s := &http.Server{
 	   Addr:    ":80",
 	   Handler: m,
@@ -79,6 +73,35 @@ func NewPodEventsHandler() *podEventsHandler {
    	return podEventsHandler
 }
 
+func (h *podEventsHandler) showList(w http.ResponseWriter, r *http.Request, err string) {
+	// Cutting corners: not thread safe
+	msg := fmt.Sprintf("I do not have '%s'\nI have %v\n", err, getKeys(h.endPoints))
+	w.Write([]byte(msg))
+}
+
+func (h *podEventsHandler) muxHandleFunc(w http.ResponseWriter, r *http.Request)  {
+	endPoints := h.endPoints
+	urlPath := r.URL.Path
+	if len(urlPath) < 1 {
+		h.showList(w, r, "")
+		return
+	}
+	urlPath = urlPath[1:]
+	// Cutting corners: not thread safe
+	endPoint, ok := endPoints[urlPath];
+	if !ok {
+		h.showList(w, r, urlPath)
+		return
+	}
+
+	// Cutting corners: I need a proxy here, I/O streaming, load balancer, etc
+	// Meanwhile only HTTP GET, no URL params
+	ipAddr := fmt.Sprintf("http://%s:%d", endPoint.pod.Status.PodIP, endPoint.port.ContainerPort)
+	resp, _ := http.Get(ipAddr)
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	w.Write(body)
+}
 
 func (h *podEventsHandler) fullName(pod *corev1.Pod) string {
 	podName, podNamespace := pod.Name, pod.Namespace
@@ -93,6 +116,7 @@ func (h *podEventsHandler) fullNameContainer(pod *corev1.Pod, container corev1.C
 // See if there are declared ports in a newly added pod
 func (h *podEventsHandler) addPod(pod *corev1.Pod) {
 	fullName := h.fullName(pod)
+	// Cutting corners: not thread safe
 	if _, ok := h.processedPods[fullName];ok {
 		return 
 	}
@@ -119,6 +143,7 @@ func (h *podEventsHandler) addPod(pod *corev1.Pod) {
 
 func (h *podEventsHandler) removePod(pod *corev1.Pod) {
 	fullName, podStatus := h.fullName(pod), pod.Status
+	// Cutting corners: not thread safe
 	if _, ok := h.processedPods[fullName];!ok {
 		return 
 	}
