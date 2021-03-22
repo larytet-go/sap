@@ -24,7 +24,7 @@ spec:
         # Meanwhile a single environment variable which rules them all
         env:
         - name: "RULES"
-          # comma separaed tuples (host:path)
+          # comma separaed tuples (host:path,host:path,...)
           # Intentionaly no port - I know to figire out the pods ports
           value: "echo:default/echo-app"
 

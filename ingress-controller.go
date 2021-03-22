@@ -87,6 +87,7 @@ func loadRules() (host2service map[string]string) {
 			continue
 		}
 		hostname, serviceName := ruleTuple[0], ruleTuple[1]
+		hostname, serviceName = strings.Trim(hostname, "\t \n"), strings.Trim(serviceName, "\t \n")
 		host2service[hostname] = serviceName
 	}
 	logger.Infof("Loaded rules: %v", host2service)
