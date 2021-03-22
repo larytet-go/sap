@@ -53,6 +53,13 @@ type (
 		endPoints map[string]endPoint
 		// hostname:service mapping I load from the EnvVar RULES
 		rules map[string]string
+		// debug stats 
+		// Cutting corners: Prometheus?
+		stats struct {
+			errNotFound int
+			found       int
+			ruleHit     int
+		}
 	}
 )
 
@@ -123,8 +130,15 @@ func (h *podEventsHandler) showList(w http.ResponseWriter, r *http.Request, err 
 }
 
 func (h *podEventsHandler) showStatus(w http.ResponseWriter, r *http.Request) {
-	msg := fmt.Sprintf("%v\n%v\n",h.endPoints, h.rules)
-	w.Write([]byte(msg))
+	for service := range h.endPoints {
+		endPoint := h.endPoints[service]
+		msg := fmt.Sprintf("%v %d\n", endPoint.name, endPoint.port.ContainerPort)
+		w.Write([]byte(msg))
+	}
+	for hostname := range h.rules {
+		msg := fmt.Sprintf("%s %s\n", hostname, h.rules[hostname])
+		w.Write([]byte(msg))
+	}
 }
 
 // Check rules first. If no such rule try the fallback - the full service name 

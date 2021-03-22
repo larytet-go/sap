@@ -39,6 +39,11 @@ curl http://127.0.0.1:8080/echo
 curl http://127.0.0.1:8080/default/echo-app
 ```
 
+Get the service status 
+```sh
+curl http://127.0.0.1:8080/ingress
+```
+
 Log
 ```sh
 export KUBECONFIG=./config && $GOPATH/bin/stern_linux_amd64 ".*"
