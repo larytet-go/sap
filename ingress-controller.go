@@ -43,8 +43,17 @@ func (h *PodEventsHandler) addPod(pod *corev1.Pod) {
 		return 
 	}
 	podStatus := pod.Status
-	logger.Infof("Add pod %s phase %s", fullName, podStatus.Phase)
+	logger.Infof("Adding pod %s phase %s", fullName, podStatus.Phase)
 	h.pods[fullName] = pod
+	podSpec := pod.Spec
+	podContainers := podSpec.Containers
+	for _, container := range(podContainers) {
+		containerName, containrPorts := container.Name, container.Ports
+		if len(containrPorts) == 0 {
+			continue
+		}
+		logger.Infof("\tContainer %s ports %v", containerName, containrPorts)
+	}
 }
 
 func (h *PodEventsHandler) removePod(pod *corev1.Pod) {
