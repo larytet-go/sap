@@ -46,9 +46,12 @@ Try Echo
 ```sh
 # Use mapping 
 curl http://127.0.0.1:8080/echo
+curl -H "Host: echo" http://127.0.0.1:8080
+
 # Explicit service name
 curl http://127.0.0.1:8080/default/echo-app
-# If the DNS configured to resolve host `echo` you can do
+
+# If the DNS is configured to resolve host `echo` you can do
 curl -H "Host: echo" http://echo:8080
 ```
 
