@@ -140,7 +140,10 @@ func (h *podEventsHandler) showList(w http.ResponseWriter, r *http.Request, err 
 }
 
 func (h *podEventsHandler) showStatus(w http.ResponseWriter, r *http.Request) {
-	status := status{}
+	status := status{
+		Pods:  map[string]int32{},
+		Rules: map[string]string{},
+	}
 	for service := range h.endPoints {
 		endPoint := h.endPoints[service]
 		status.Pods[endPoint.name] = endPoint.port.ContainerPort
