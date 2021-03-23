@@ -20,10 +20,10 @@ spec:
         ports:
         - containerPort: 80
           hostPort: 8080
-        # Cutting corners: I CustomResourceDefinition
-        # Meanwhile a single environment variable which rules them all
         env:
         - name: "RULES"
+          # Cutting corners: I CustomResourceDefinition
+          # Meanwhile a single environment variable which rules them all
           # comma separaed tuples (host:path,host:path,...)
           # Intentionaly no port - I know to figire out the pods ports
           # whitespace is ignored
