@@ -78,6 +78,7 @@ kubectl scale --replicas=1 deployment.apps/ingress-controller  && \
 kubectl get all
 ```
 
+Restart the `echo` service
 ```sh
 kubectl delete pod echo-app && kubectl apply -f ./echo.yaml && kubectl get all
 ```
