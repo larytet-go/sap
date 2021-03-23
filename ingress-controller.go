@@ -46,6 +46,14 @@ type (
 		container corev1.Container
 	}	
 
+	// debug stats 
+	// Cutting corners: Prometheus?
+	stats struct {
+		ErrNotFound int  `json:"errNotFound"`
+		Found       int  `json:"found"`
+		RuleHit     int  `json:"ruleHit"`
+	}
+
 	podEventsHandler struct {
 		// I need a fast lookup for not relevant events in the cluster
 		// and a map of endpoints
@@ -54,13 +62,14 @@ type (
 		endPoints map[string]endPoint
 		// hostname:service mapping I load from the EnvVar RULES
 		rules map[string]string
-		// debug stats 
-		// Cutting corners: Prometheus?
-		stats struct {
-			ErrNotFound int  `json:"errNotFound"`
-			Found       int  `json:"found"`
-			RuleHit     int  `json:"ruleHit"`
-		}
+		stats stats
+	}
+
+	// I need this for JSON status API
+	status struct {
+		Stats stats
+		Pods  map[string]int32
+		Rules map[string]string
 	}
 )
 
@@ -131,16 +140,16 @@ func (h *podEventsHandler) showList(w http.ResponseWriter, r *http.Request, err 
 }
 
 func (h *podEventsHandler) showStatus(w http.ResponseWriter, r *http.Request) {
+	status := status{}
 	for service := range h.endPoints {
 		endPoint := h.endPoints[service]
-		msg := fmt.Sprintf("%v %d\n", endPoint.name, endPoint.port.ContainerPort)
-		w.Write([]byte(msg))
+		status.Pods[endPoint.name] = endPoint.port.ContainerPort
 	}
 	for hostname := range h.rules {
-		msg := fmt.Sprintf("%s %s\n", hostname, h.rules[hostname])
-		w.Write([]byte(msg))
+		status.Rules[hostname] = h.rules[hostname]
 	}
-	jsonData, _ := json.MarshalIndent(h.stats, "", "    ")
+	status.Stats = h.stats
+	jsonData, _ := json.MarshalIndent(&status, "", "    ")
 	w.Write(jsonData)
 }
 
