@@ -1,5 +1,5 @@
 
-# Usage
+# Deployment
 
 ```sh
 # Create a cluster using https://kind.sigs.k8s.io/docs/user/quick-start/
@@ -23,6 +23,8 @@ docker build -t ingress-controller:mylatest .
 $GOPATH/bin/kind load docker-image ingress-controller:mylatest
 ```
 
+# Usage
+
 Start the service 
 ```sh
 kubectl apply -f ./echo.yaml && kubectl get all
@@ -38,6 +40,8 @@ curl http://127.0.0.1:8080/echo
 # Explicit service name
 curl http://127.0.0.1:8080/default/echo-app
 ```
+
+# Development
 
 Get the service status 
 ```sh
@@ -55,8 +59,6 @@ Restart the controller
 kubectl scale --replicas=0 deployment.apps/ingress-controller
 kubectl scale --replicas=1 deployment.apps/ingress-controller
 ```
-
-# Debug tips
 
 ```sh
 docker build -t ingress-controller:mylatest . && \
