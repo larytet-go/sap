@@ -142,6 +142,8 @@ func (h *podEventsHandler) showStatus(w http.ResponseWriter, r *http.Request) {
 }
 
 func getHost(r *http.Request) string {
+	// Does kind router strip the host name?
+	// logger.Infof("r.URL.Host %s, r.Host %s", r.URL.Host, r.Host)
 	host := r.URL.Host
 	if host == "" {
 		host = r.Host
