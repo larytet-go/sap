@@ -5,8 +5,9 @@
 GO111MODULE="on" go get sigs.k8s.io/kind@v0.10.0
 # Make sure that no other configurations are impacted
 export KUBECONFIG=./config
+# $GOPATH/bin/kind --kubeconfig ./config delete cluster
 # This step downloads the images. It will take a few minutes depending on the connection
-$GOPATH/bin/kind --kubeconfig ./config delete cluster
+# Pay attention to the configuration `kind.yaml` - map external ports
 $GOPATH/bin/kind --kubeconfig ./config --config kind.yaml create cluster
 
 # list clusters 
