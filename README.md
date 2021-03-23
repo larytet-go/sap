@@ -17,10 +17,9 @@ $GOPATH/bin/kind get clusters
 kubectl cluster-info --context kind-kind
 ```
 
-Build the controller, load the image to the cluster
+Build the controller, load the image into the cluster
 ```sh
 docker build -t ingress-controller:mylatest .
-# Load the image into the cluster
 $GOPATH/bin/kind load docker-image ingress-controller:mylatest
 ```
 
