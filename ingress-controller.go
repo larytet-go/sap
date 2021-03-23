@@ -61,6 +61,15 @@ type (
 			ruleHit     int
 		}
 	}
+
+	type Rule struct {
+		Hostname string `json:"hostname"`
+		Service  string `json:"service"`
+	}
+
+	type RulesSpec struct {
+		Rules []Rule `json:"rules"`
+	}
 )
 
 // List of keys in a map
