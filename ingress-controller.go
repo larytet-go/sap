@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -56,9 +57,9 @@ type (
 		// debug stats 
 		// Cutting corners: Prometheus?
 		stats struct {
-			errNotFound int
-			found       int
-			ruleHit     int
+			ErrNotFound int  `json:"errNotFound"`
+			Found       int  `json:"found"`
+			RuleHit     int  `json:"ruleHit"`
 		}
 	}
 )
@@ -103,22 +104,22 @@ func loadRules() (host2service map[string]string) {
 }
 
 // Create a new event handler: HTTP mux, HTTP proxy
-func NewPodEventsHandler() *podEventsHandler {
-	podEventsHandler := &podEventsHandler {
+func (h *podEventsHandler) init() *podEventsHandler {
+	*h = podEventsHandler {
 		processedPods: map[string]*corev1.Pod{},
 		endPoints:     map[string]endPoint{},
 		rules:         loadRules(),
 	}
 
 	m := http.NewServeMux()
-   	m.HandleFunc("/", podEventsHandler.muxHandleFunc)
+   	m.HandleFunc("/", h.muxHandleFunc)
    	s := &http.Server{
 	   Addr:    ":80",
 	   Handler: m,
 	}
 
    	go s.ListenAndServe()
-   	return podEventsHandler
+	return h
 }
 
 // Show end points if an error
@@ -139,6 +140,8 @@ func (h *podEventsHandler) showStatus(w http.ResponseWriter, r *http.Request) {
 		msg := fmt.Sprintf("%s %s\n", hostname, h.rules[hostname])
 		w.Write([]byte(msg))
 	}
+	jsonData, _ := json.MarshalIndent(h.stats, "", "    ")
+	w.Write(jsonData)
 }
 
 func getHost(r *http.Request) string {
@@ -157,6 +160,7 @@ func (h *podEventsHandler) lookupService(r *http.Request) (endPoint, string, boo
 	// Cutting corners: not thread safe
 	serviceName, ok := h.rules[host];
 	if ok {
+		h.stats.RuleHit++
 		endPoint, ok := h.endPoints[serviceName]
 		return endPoint, host, ok
 	}
@@ -164,6 +168,7 @@ func (h *podEventsHandler) lookupService(r *http.Request) (endPoint, string, boo
 	urlPath := r.URL.Path
 	serviceName, ok = h.rules[urlPath];
 	if ok {
+		h.stats.RuleHit++
 		endPoint, ok := h.endPoints[serviceName]
 		return endPoint, urlPath, ok
 	}
@@ -189,9 +194,11 @@ func (h *podEventsHandler) muxHandleFunc(w http.ResponseWriter, r *http.Request)
 	}
 	endPoint, path, ok := h.lookupService(r)
 	if !ok {
+		h.stats.ErrNotFound++
 		h.showList(w, r, path)
 		return
 	}
+	h.stats.Found++
 
 	ipAddr := fmt.Sprintf("http://%s:%d", endPoint.pod.Status.PodIP, endPoint.port.ContainerPort)
 	resp, _ := http.Get(ipAddr)
@@ -297,7 +304,7 @@ func run() error {
 		},
 	})
 
-	podEventsHandler := NewPodEventsHandler()
+	podEventsHandler := (&podEventsHandler{}).init()
 	hand := controller.HandlerFunc(podEventsHandler.handler)
 
 	// Create the controller with custom configuration.
