@@ -65,7 +65,7 @@ type (
 		stats stats
 	}
 
-	// I need this for JSON status API
+	// I need this for status API: I json.Marshal the struct
 	status struct {
 		Stats stats
 		Pods  map[string]int32
