@@ -57,7 +57,7 @@ curl -H "Host: echo" http://echo:8080
 
 # Development
 
-Get the service status 
+Get the service status (JSON)
 ```sh
 curl http://127.0.0.1:8080/ingress
 ```
