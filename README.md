@@ -24,12 +24,13 @@ $GOPATH/bin/kind load docker-image ingress-controller:mylatest
 
 # Usage
 
-Modify environment variable RULES in the ingress-controller.yaml
-The variable contains comma separaed tuples (host:path,host:path,...). Intentionaly there is no port. I know to figire out the pods ports. I ignore whitespaces.
+Modify environment variable RULES in the ingress-controller.yaml. The variable contains comma separaed tuples (hostname:service,hostname:service,...). Intentionaly there is no port. I know to figire out the pods ports. I ignore whitespaces.
+
+In the example below rules map `echo` to the service `default/echo-app`
 ```
 env:
 - name: "RULES"
-    value: " echo : default/echo-app , default/my-cool-service "
+    value: " echo : default/echo-app "
 ```
 
 
