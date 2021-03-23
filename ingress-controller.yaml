@@ -22,7 +22,7 @@ spec:
           hostPort: 8080
         env:
         - name: "RULES"
-          # Cutting corners: I CustomResourceDefinition
+          # Cutting corners: I need CustomResourceDefinition
           # Meanwhile a single environment variable which rules them all
           # comma separaed tuples (host:path,host:path,...)
           # Intentionaly no port - I know to figire out the pods ports
