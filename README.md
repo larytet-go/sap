@@ -36,8 +36,8 @@ env:
 
 Start the service 
 ```sh
-kubectl apply -f ./echo.yaml && kubectl get all
-kubectl apply -f ./ingress-controller.yaml && kubectl get all
+kubectl apply -f ./echo.yaml
+kubectl apply -f ./ingress-controller.yaml
 # kubectl get all
 kubectl get pods
 ```
