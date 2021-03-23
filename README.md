@@ -34,7 +34,6 @@ env:
     value: " echo : default/echo-app "
 ```
 
-
 Start the service 
 ```sh
 kubectl apply -f ./echo.yaml && kubectl get all
