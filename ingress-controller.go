@@ -63,6 +63,7 @@ type (
 	}
 
 	type Rule struct {
+		Name     string `json:"name"`
 		Hostname string `json:"hostname"`
 		Service  string `json:"service"`
 	}

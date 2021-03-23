@@ -28,7 +28,10 @@ spec:
           # Intentionaly no port - I know to figire out the pods ports
           # whitespace is ignored
           value: " echo : default/echo-app , bad:ru:le "
-
+        rules:
+          - name: "echo"
+            hostname: "echo"
+            service: "default/echo-app"
 ---
 
 apiVersion: v1
