@@ -141,16 +141,33 @@ func (h *podEventsHandler) showStatus(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getHost(r *http.Request) string {
+	host := r.URL.Host
+	if host == "" {
+		host = r.Host
+	}
+	return host
+}
+
 // Check rules first. If no such rule try the fallback - the full service name 
-func (h *podEventsHandler) lookupService(path string) (endPoint, bool) {
+func (h *podEventsHandler) lookupService(r *http.Request) (endPoint, string, bool) {
+	host := getHost(r)
 	// Cutting corners: not thread safe
-	serviceName, ok := h.rules[path];
+	serviceName, ok := h.rules[host];
 	if ok {
 		endPoint, ok := h.endPoints[serviceName]
-		return endPoint, ok
+		return endPoint, host, ok
 	}
-	endPoint, ok := h.endPoints[path];
-	return endPoint, ok
+
+	urlPath := r.URL.Path
+	serviceName, ok = h.rules[urlPath];
+	if ok {
+		endPoint, ok := h.endPoints[serviceName]
+		return endPoint, urlPath, ok
+	}
+
+	endPoint, ok := h.endPoints[urlPath];
+	return endPoint, urlPath, ok
 }
 
 // This is "reverse proxy"
@@ -168,9 +185,9 @@ func (h *podEventsHandler) muxHandleFunc(w http.ResponseWriter, r *http.Request)
 		h.showStatus(w, r)
 		return
 	}
-	endPoint, ok := h.lookupService(urlPath)
+	endPoint, path, ok := h.lookupService(r)
 	if !ok {
-		h.showList(w, r, urlPath)
+		h.showList(w, r, path)
 		return
 	}
 

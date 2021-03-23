@@ -48,6 +48,8 @@ Try Echo
 curl http://127.0.0.1:8080/echo
 # Explicit service name
 curl http://127.0.0.1:8080/default/echo-app
+# If the DNS configured to resolve host `echo` you can do
+curl -H "Host: echo" http://echo:8080
 ```
 
 # Development
