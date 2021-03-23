@@ -42,9 +42,9 @@ kubectl apply -f ./ingress-controller.yaml
 kubectl get pods
 ```
 
-Try Echo 
+Try `echo` service
 ```sh
-# Use mapping 
+# Use mapping from the RULES
 curl http://127.0.0.1:8080/echo
 curl -H "Host: echo" http://127.0.0.1:8080
 
