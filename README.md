@@ -74,6 +74,7 @@ kubectl scale --replicas=0 deployment.apps/ingress-controller
 kubectl scale --replicas=1 deployment.apps/ingress-controller
 ```
 
+Build and load the ingress container
 ```sh
 docker build -t ingress-controller:mylatest . && \
 $GOPATH/bin/kind load docker-image ingress-controller:mylatest && \
