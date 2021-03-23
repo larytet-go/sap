@@ -67,9 +67,9 @@ type (
 
 	// I need this for status API: I json.Marshal the struct
 	status struct {
-		Stats stats
-		Pods  map[string]int32
-		Rules map[string]string
+		Stats stats             `json:"stats"`
+		Pods  map[string]int32  `json:"pods"`
+		Rules map[string]string `json:"rules"`
 	}
 )
 
