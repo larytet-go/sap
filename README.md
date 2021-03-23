@@ -1,22 +1,23 @@
 # Deployment
 
+Create a cluster using https://kind.sigs.k8s.io/docs/user/quick-start/
+Pay attention to the configuration `kind.yaml` - map external ports
 ```sh
-# Create a cluster using https://kind.sigs.k8s.io/docs/user/quick-start/
 GO111MODULE="on" go get sigs.k8s.io/kind@v0.10.0
 # Make sure that no other configurations are impacted
 export KUBECONFIG=./config
 # $GOPATH/bin/kind --kubeconfig ./config delete cluster
 # This step downloads the images. It will take a few minutes depending on the connection
-# Pay attention to the configuration `kind.yaml` - map external ports
 $GOPATH/bin/kind --kubeconfig ./config --config kind.yaml create cluster
+```
 
-# list clusters 
+Check clusters status
+```
 $GOPATH/bin/kind get clusters
-# check the status
 kubectl cluster-info --context kind-kind
 ```
 
-Build the image 
+Build the controller, load the image to the cluster
 ```sh
 docker build -t ingress-controller:mylatest .
 # Load the image into the cluster
