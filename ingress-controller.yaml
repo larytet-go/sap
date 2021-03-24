@@ -25,7 +25,7 @@ spec:
           # Cutting corners: I need CustomResourceDefinition
           # Meanwhile a single environment variable which rules them all
           # comma separaed tuples (host:path,host:path,...)
-          # Intentionaly no port - I know to figire out the pods ports
+          # Intentionaly no port - I know to figure out the pods ports
           # whitespace is ignored
           value: " echo : default/echo-app , bad:ru:le "
 
