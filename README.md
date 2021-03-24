@@ -55,7 +55,7 @@ curl http://127.0.0.1:8080/default/echo-app
 curl -H "Host: echo" http://echo:8080
 ```
 
-# How it works
+# How stuff works
  
 In the `kind.yaml` there is a map of the host port 8080 to the node port 30950
 In the `ingress-controller.yaml` port 30950 is mapped to `ingress-controller:80`
