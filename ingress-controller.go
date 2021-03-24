@@ -198,9 +198,8 @@ func (h *podEventsHandler) muxHandleFunc(w http.ResponseWriter, r *http.Request)
 		h.showList(w, r, "")
 		return
 	}
-	urlPath = urlPath[1:]
 	switch urlPath {
-		case "ingress":
+		case "/ingress":
 		h.showStatus(w, r)
 		return
 	}
