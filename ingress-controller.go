@@ -177,7 +177,7 @@ func (h *podEventsHandler) lookupService(r *http.Request) (endPoint, string, boo
 		return endPoint, host, ok
 	}
 
-	urlPath := r.URL.Path
+	urlPath := r.URL.Path[1:]
 	serviceName, ok = h.rules[urlPath];
 	if ok {
 		h.stats.RuleHit++
