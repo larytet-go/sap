@@ -60,12 +60,10 @@ curl -H "Host: echo" http://echo:8080
 In the `kind.yaml` there is a map of the host port 8080 to the node port 30950
 In the `ingress-controller.yaml` port 30950 is mapped to `ingress-controller:80`
 
-The ingress-controller service proxys HTTP GET requests to the pods having opened ports.
-
 I get cluster events - delete/create pods - from github.com/spotahome/kooper/v2/controller The ingress-controller service looks for pods having open ports. In the ingress-controller.go there is a map with all discovered pods. 
 
-When an HTTP GET arrives the mux performs lookup in the configured rule and among the collected pods, forwards 
-the HTTP GET to the matching pod.
+ When an HTTP GET arrives the mux performs lookup in the configured rule and among the collected pods, forwards 
+the HTTP GET to the matching pod. The ingress-controller service proxys HTTP GET requests to the pods having opened ports.
 
 # Development
 
